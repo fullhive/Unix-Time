@@ -1,0 +1,127 @@
+<!doctype html>
+<html ng-app="app" ng-controller="MainController">
+
+<head>
+    <meta charset=utf-8>
+    <meta name=viewport content="width=device-width">
+    <title>Unix Time - Convert dates to and from Unix Timestamps</title>
+    
+    <link rel="stylesheet" href="bootstrap.min.css">
+</head>
+
+<body>
+    
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <h3>Unix<small class="text-muted"> Time Converter</small></h3>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">To Unix</h5>
+                        <form ng-submit="convertToUnix()" class="form-inline">
+                            <input ng-model="enteredDate.month" type="text" class="form-control mb-2 mr-sm-2" placeholder="MM">
+                            <input ng-model="enteredDate.day" type="text" class="form-control mb-2 mr-sm-2" placeholder="DD">
+                            <input ng-model="enteredDate.year" type="text" class="form-control mb-2 mr-sm-2" placeholder="YYYY">
+                            <input ng-model="enteredDate.hour" type="text" class="form-control mb-2 mr-sm-2" placeholder="h">
+                            <input ng-model="enteredDate.minutes" type="text" class="form-control mb-2 mr-sm-2" placeholder="mm">
+                            <button type="submit" class="btn btn-info mb-2">Convert</button>
+                        </form>
+                        <ul class="list-group">
+                            <li ng-repeat="result in resultsToUnix" class="list-group-item"><strong>{{result.type}}</strong>: {{result.result}} <button ng-click="copyToClipboard(result.result)" class="btn btn-sm btn-danger float-right">Copy</button></li> 
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">From Unix</h5>
+                        <form ng-submit="convertFromUnix()" class="form-inline">
+                            <input ng-model="enteredUnix" type="text" class="form-control mb-2 mr-sm-2" placeholder="Unix Time">
+                            <button type="submit" class="btn btn-info mb-2">Convert</button>
+                        </form>
+                        <ul class="list-group">
+                            <li ng-repeat="result in resultsFromUnix" class="list-group-item"><strong>{{result.type}}</strong>: {{result.result}} <button ng-click="copyToClipboard(result.result)" class="btn btn-sm btn-danger float-right">Copy</button></li> 
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row" style="margin-top: 60px">
+                <div class="col text-center">
+                    <p style="margin-bottom: 40px">
+                        <a href="http://www.fullhive.com">
+                        <img src="http://www.fullhive.com/assets/img/fullhiver.jpg" class="img-fluid rounded-circle center-block" style="max-width: 160px">
+                        </a>
+                    </p>
+                    <p>
+                        As with all projects at <a href="http://www.fullhive.com">Full Hive</a>, if you find a use for this please use it. All projects here are just for fun and usually just the end result of dumb ideas<a href="http://www.fullhive.com">.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="jquery.min.js"></script>
+    <script src="moment.min.js"></script>
+    <script src="angular.min.js"></script>
+    <script src="clipboard.js"></script>
+    
+
+<script type="text/javascript">
+
+var app = angular.module('app', ['angular-clipboard']);
+app.controller('MainController', function($scope, clipboard) {
+    $scope.enteredDate = {
+        month: null,
+        day: null,
+        year: null,
+        hour: null,
+        minutes: null
+    };
+    $scope.enteredUnix = null;
+    $scope.resultsToUnix = [];
+    $scope.resultsFromUnix = [];
+    $scope.convertToUnix = function() {
+        enteredDate = $scope.enteredDate.month+'/'+$scope.enteredDate.day+'/'+$scope.enteredDate.year+' '+$scope.enteredDate.hour+':'+$scope.enteredDate.minutes;
+        $scope.resultsToUnix = [
+            {type: 'Unix', result: moment(enteredDate).format('X')},
+            {type: 'Unix (ms)', result: moment(enteredDate).format('x')},
+            {type: 'ISO', result: moment(enteredDate).format()},
+            {type: 'Numeral', result: moment(enteredDate).format('L')},
+            {type: 'Numeral (s)', result: moment(enteredDate).format('l')},
+            {type: 'Name', result: moment(enteredDate).format('LL')},
+            {type: 'Day', result: moment(enteredDate).format('LLLL')},
+            {type: 'Time', result: moment(enteredDate).format('LT')}
+        ]
+    };
+    $scope.convertFromUnix = function() {
+        enteredUnix = 0;
+        if ($scope.enteredUnix.length == 10) {enteredUnix = $scope.enteredUnix+'000'} else {enteredUnix = $scope.enteredUnix};
+        if (enteredUnix.length == 13) {    
+            enteredUnix = Number(enteredUnix);
+            $scope.resultsFromUnix = [
+                {type: 'Unix', result: moment(enteredUnix).format('X')},
+                {type: 'Unix (ms)', result: moment(enteredUnix).format('x')},
+                {type: 'ISO', result: moment(enteredUnix).format()},
+                {type: 'Numeral', result: moment(enteredUnix).format('L')},
+                {type: 'Numeral (s)', result: moment(enteredUnix).format('l')},
+                {type: 'Name', result: moment(enteredUnix).format('LL')},
+                {type: 'Day', result: moment(enteredUnix).format('LLLL')},
+                {type: 'Time', result: moment(enteredUnix).format('LT')}
+            ]
+        }
+    };
+    $scope.copyToClipboard = function(copyText) {
+        clipboard.copyText(copyText);
+    };
+});
+
+</script>
+
+</body>
+</html>
